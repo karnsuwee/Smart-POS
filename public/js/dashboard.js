@@ -55,7 +55,7 @@ export async function getAiInsight() {
     renderAiInsight(data.provider, data.insight);
   } finally {
     els.aiButton.disabled = false;
-    els.aiButton.textContent = 'วิเคราะห์สต็อก';
+    els.aiButton.textContent = 'ถาม AI';
   }
 }
 

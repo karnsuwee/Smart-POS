@@ -154,17 +154,24 @@ authRoutes.patch('/me/settings', requireAuth, async (req, res) => {
   const vatMode = ['none', 'inclusive', 'exclusive'].includes(req.body.vatMode)
     ? req.body.vatMode
     : 'exclusive';
+  const storeName = String(req.body.storeName || '').trim();
+  if (!storeName) return res.status(400).json({ message: 'กรุณากรอกชื่อร้าน' });
+  if (storeName.length > 80) return res.status(400).json({ message: 'ชื่อร้านยาวเกินไป (สูงสุด 80 ตัวอักษร)' });
 
   let user;
   if (isDbReady()) {
-    user = await User.findByIdAndUpdate(
-      req.user.id,
-      { settings: { vatMode } },
-      { new: true }
-    );
+    user = await User.findById(req.user.id);
+    if (user) {
+      user.settings = { ...(user.settings || {}), vatMode };
+      user.storeName = storeName;
+      await user.save();
+    }
   } else {
     user = memory.users.find(item => item.id === req.user.id);
-    if (user) user.settings = { vatMode };
+    if (user) {
+      user.settings = { ...(user.settings || {}), vatMode };
+      user.storeName = storeName;
+    }
   }
 
   if (!user) return res.status(404).json({ message: 'ไม่พบผู้ใช้' });
