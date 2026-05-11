@@ -962,8 +962,12 @@ body.dark .table-status-button.free {
   min-height: 100%;
   padding: 14px;
   border-radius: 8px;
-  color: #15211a;
+  color: var(--text);
   background: linear-gradient(145deg, #153d2a 0%, #1e392f 54%, #263033 100%);
+}
+
+body.dark .pos-dashboard {
+  background: linear-gradient(145deg, #101915 0%, #16231d 56%, #1b2721 100%);
 }
 
 .stat-grid {
@@ -975,15 +979,15 @@ body.dark .table-status-button.free {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0;
   overflow: hidden;
-  border: 1px solid #d8dfd8;
+  border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
 }
 
 .stat-card {
   padding: 10px 14px;
-  border-right: 1px solid #dfe4df;
-  background: #fff;
+  border-right: 1px solid var(--line);
+  background: var(--surface);
   text-align: center;
 }
 
@@ -993,7 +997,7 @@ body.dark .table-status-button.free {
 
 .stat-card span {
   display: block;
-  color: #1d2720;
+  color: var(--text);
   font-size: 15px;
   font-weight: 900;
   line-height: 1.1;
@@ -1002,14 +1006,14 @@ body.dark .table-status-button.free {
 .stat-card small {
   display: block;
   margin-top: 2px;
-  color: #48544e;
+  color: var(--muted);
   font-weight: 700;
 }
 
 .stat-card strong {
   display: block;
   margin-top: 4px;
-  color: #0f1712;
+  color: var(--text);
   font-size: 30px;
   line-height: 1;
 }
@@ -1023,10 +1027,10 @@ body.dark .table-status-button.free {
 
 .chart-panel,
 .ai-panel {
-  border: 1px solid #d8dfd8;
+  border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
-  color: #15211a;
+  background: var(--surface);
+  color: var(--text);
 }
 
 .chart-panel {
@@ -1080,7 +1084,7 @@ body.dark .table-status-button.free {
 .dashboard-panel-head span {
   display: block;
   margin-top: 2px;
-  color: #5d6962;
+  color: var(--muted);
   font-size: 12px;
   font-weight: 800;
 }
@@ -1091,7 +1095,7 @@ body.dark .table-status-button.free {
   gap: 4px;
   padding: 4px;
   border-radius: 8px;
-  background: #edf3ed;
+  background: var(--surface-soft);
 }
 
 .dashboard-range-tabs button {
@@ -1099,7 +1103,7 @@ body.dark .table-status-button.free {
   border-radius: 6px;
   min-width: 68px;
   padding: 6px 10px;
-  color: #5b6860;
+  color: var(--muted);
   background: transparent;
   font-size: 12px;
   font-weight: 900;
@@ -1125,11 +1129,11 @@ body.dark .table-status-button.free {
 .dashboard-filter-fields input,
 .dashboard-filter-fields select {
   min-width: 148px;
-  border: 1px solid #d8dfd8;
+  border: 1px solid var(--line);
   border-radius: 8px;
   padding: 8px 10px;
-  color: #203027;
-  background: #fff;
+  color: var(--text);
+  background: var(--surface);
   font-size: 12px;
   font-weight: 700;
 }
@@ -1153,7 +1157,7 @@ body.dark .table-status-button.free {
   display: grid;
   place-items: center;
   height: 180px;
-  color: #5d6962;
+  color: var(--muted);
   font-size: 13px;
   font-weight: 800;
   text-align: center;
@@ -1172,7 +1176,7 @@ body.dark .table-status-button.free {
   aspect-ratio: 1;
   margin: 8px auto 12px;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 0 0 1px var(--line);
 }
 
 .category-donut::after {
@@ -1180,8 +1184,8 @@ body.dark .table-status-button.free {
   position: absolute;
   inset: 34px;
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line);
 }
 
 .category-donut > div {
@@ -1193,7 +1197,7 @@ body.dark .table-status-button.free {
 }
 
 .category-donut span {
-  color: #303b35;
+  color: var(--muted);
   font-size: 12px;
   font-weight: 900;
 }
@@ -1214,7 +1218,7 @@ body.dark .table-status-button.free {
   grid-template-columns: 12px minmax(0, 1fr) auto;
   gap: 6px;
   align-items: center;
-  color: #243128;
+  color: var(--text);
   font-size: 12px;
   font-weight: 800;
 }
@@ -1237,7 +1241,7 @@ body.dark .table-status-button.free {
 
 .top-selling-table {
   overflow: hidden;
-  border: 1px solid #dfe4df;
+  border: 1px solid var(--line);
   border-radius: 8px;
 }
 
@@ -1247,8 +1251,8 @@ body.dark .table-status-button.free {
   gap: 8px;
   align-items: center;
   padding: 7px 10px;
-  border-top: 1px solid #e9eee9;
-  color: #15211a;
+  border-top: 1px solid var(--line);
+  color: var(--text);
   font-size: 13px;
 }
 
@@ -1270,8 +1274,12 @@ body.dark .table-status-button.free {
 
 .top-selling-head {
   color: #fff;
-  background: #44494f;
+  background: #3f464c;
   font-weight: 900;
+}
+
+body.dark .top-selling-head {
+  background: #2f363c;
 }
 
 .top-selling-head span:first-child {
