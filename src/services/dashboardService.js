@@ -19,10 +19,11 @@ export function buildDashboard(orders, filters = {}) {
 
   filteredOrders.forEach(order => {
     const date = new Date(order.createdAt);
+    const bangkok = toBangkokDate(date);
     const day = weekdayLabels[getWeekdayOrderIndex(date)];
-    const hour = `${String(date.getHours()).padStart(2, '0')}:00`;
+    const hour = `${String(bangkok.getUTCHours()).padStart(2, '0')}:00`;
     const dateKey = getLocalDateKey(date);
-    const dateLabel = String(date.getDate()).padStart(2, '0');
+    const dateLabel = String(bangkok.getUTCDate()).padStart(2, '0');
     const subtotal = Number(order.subtotal || 0);
     const vatAmount = Number(order.vatAmount || 0);
     const total = Number(order.total || 0);
@@ -87,7 +88,7 @@ function matchesRange(createdAt, filters) {
 }
 
 function getWeekdayOrderIndex(date) {
-  return (date.getDay() + 6) % 7;
+  return (toBangkokDate(date).getUTCDay() + 6) % 7;
 }
 
 function normalizeDateInput(value) {
@@ -106,20 +107,28 @@ function normalizeMonthInput(value) {
 }
 
 function getLocalDateKey(date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  const bangkok = toBangkokDate(date);
+  return `${bangkok.getUTCFullYear()}-${String(bangkok.getUTCMonth() + 1).padStart(2, '0')}-${String(bangkok.getUTCDate()).padStart(2, '0')}`;
 }
 
 function getIsoWeekString(date) {
-  const target = new Date(date);
-  target.setHours(0, 0, 0, 0);
-  target.setDate(target.getDate() + 3 - ((target.getDay() + 6) % 7));
-  const weekYear = target.getFullYear();
-  const firstThursday = new Date(weekYear, 0, 4);
-  firstThursday.setDate(firstThursday.getDate() + 3 - ((firstThursday.getDay() + 6) % 7));
+  const target = toBangkokDate(date);
+  target.setUTCHours(0, 0, 0, 0);
+  target.setUTCDate(target.getUTCDate() + 3 - ((target.getUTCDay() + 6) % 7));
+  const weekYear = target.getUTCFullYear();
+  const firstThursday = new Date(Date.UTC(weekYear, 0, 4));
+  firstThursday.setUTCDate(firstThursday.getUTCDate() + 3 - ((firstThursday.getUTCDay() + 6) % 7));
   const week = 1 + Math.round((target - firstThursday) / 604800000);
   return `${weekYear}-W${String(week).padStart(2, '0')}`;
 }
 
 function getMonthInput(date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  const bangkok = toBangkokDate(date);
+  return `${bangkok.getUTCFullYear()}-${String(bangkok.getUTCMonth() + 1).padStart(2, '0')}`;
+}
+
+function toBangkokDate(date) {
+  const utcMs = date.getTime();
+  const bangkokOffsetMs = 7 * 60 * 60 * 1000;
+  return new Date(utcMs + bangkokOffsetMs);
 }

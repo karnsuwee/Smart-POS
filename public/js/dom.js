@@ -48,6 +48,7 @@ export const els = {
   confirmBillButton: document.querySelector('#confirmBillButton'),
   checkoutButton: document.querySelector('#checkoutButton'),
   saveSettingsButton: document.querySelector('#saveSettingsButton'),
+  storeNameInput: document.querySelector('#storeNameInput'),
   vatModeInputs: document.querySelectorAll('input[name="vatMode"]'),
   menuDialog: document.querySelector('#menuDialog'),
   menuForm: document.querySelector('#menuForm'),

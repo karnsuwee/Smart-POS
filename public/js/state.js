@@ -46,22 +46,28 @@ function normalizeStoredUser(user) {
 }
 
 function getTodayDateInput() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const now = toBangkokDate(new Date());
+  return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
 }
 
 function getCurrentWeekInput() {
-  const target = new Date();
-  target.setHours(0, 0, 0, 0);
-  target.setDate(target.getDate() + 3 - ((target.getDay() + 6) % 7));
-  const weekYear = target.getFullYear();
-  const firstThursday = new Date(weekYear, 0, 4);
-  firstThursday.setDate(firstThursday.getDate() + 3 - ((firstThursday.getDay() + 6) % 7));
+  const target = toBangkokDate(new Date());
+  target.setUTCHours(0, 0, 0, 0);
+  target.setUTCDate(target.getUTCDate() + 3 - ((target.getUTCDay() + 6) % 7));
+  const weekYear = target.getUTCFullYear();
+  const firstThursday = new Date(Date.UTC(weekYear, 0, 4));
+  firstThursday.setUTCDate(firstThursday.getUTCDate() + 3 - ((firstThursday.getUTCDay() + 6) % 7));
   const week = 1 + Math.round((target - firstThursday) / 604800000);
   return `${weekYear}-W${String(week).padStart(2, '0')}`;
 }
 
 function getCurrentMonthInput() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const now = toBangkokDate(new Date());
+  return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
+}
+
+function toBangkokDate(date) {
+  const utcMs = date.getTime();
+  const bangkokOffsetMs = 7 * 60 * 60 * 1000;
+  return new Date(utcMs + bangkokOffsetMs);
 }
