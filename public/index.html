@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Shop POS</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <main class="auth-screen" id="authScreen">
+      <section class="auth-panel">
+        <div>
+          <p class="eyebrow">AI-Powered POS</p>
+          <h1>Smart Shop POS</h1>
+          <p class="muted">ระบบขายหน้าร้านสำหรับร้านอาหารและเครื่องดื่ม พร้อม dashboard และ AI ช่วยวางแผนสต็อก</p>
+        </div>
+
+        <div class="auth-card">
+          <div class="auth-google-head">
+            <h2>เข้าสู่ระบบด้วย Google</h2>
+            <p class="muted">ใช้บัญชี Google เพื่อเข้าระบบและสร้างร้านของคุณอัตโนมัติ</p>
+          </div>
+          <div id="googleAuthWrap" class="google-auth-wrap hidden">
+            <div id="googleAuthButton"></div>
+          </div>
+          <p id="googleAuthStatus" class="google-auth-status">กำลังเตรียม Google Login...</p>
+        </div>
+      </section>
+    </main>
+
+    <main class="app-shell hidden" id="appShell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">S</span>
+          <div>
+            <strong>Smart POS</strong>
+            <small id="storeLabel">-</small>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" aria-label="หน้าหลัก">
+          <button class="nav-tab active" data-tab="menu" type="button">เมนู</button>
+          <button class="nav-tab" data-tab="tables" type="button">ที่นั่ง</button>
+          <button class="nav-tab" data-tab="kitchen" type="button">คิวครัว</button>
+          <button class="nav-tab" data-tab="dashboard" type="button">Dashboard</button>
+          <button class="nav-tab" data-tab="manageMenu" type="button">จัดการเมนู</button>
+          <button class="nav-tab" data-tab="settings" type="button">Settings</button>
+        </nav>
+
+        <div class="sidebar-actions">
+          <button class="ghost" id="themeToggle" type="button">Dark mode</button>
+          <button class="ghost danger" id="logoutButton" type="button">Logout</button>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <div class="content-grid">
+          <section class="main-panel">
+            <header class="topbar">
+              <div>
+                <p class="eyebrow" id="activeModeLabel">หน้าร้าน</p>
+                <h2 id="pageTitle">เมนู</h2>
+              </div>
+            </header>
+
+            <div class="tab-view active" id="menuView">
+              <div class="toolbar">
+                <div class="search-wrap">
+                  <input id="searchInput" placeholder="ค้นหาเมนูหรือหมวดหมู่">
+                </div>
+                <button class="secondary" id="openAddMenu" type="button">เพิ่มเมนู</button>
+              </div>
+
+              <div class="quick-section">
+                <div class="section-title">
+                  <h3>เมนูโปรด</h3>
+                  <span id="favoriteCount">0 รายการ</span>
+                </div>
+                <div class="favorite-row" id="favoriteRow"></div>
+              </div>
+
+              <div class="section-title">
+                <h3>เมนูทั้งหมด</h3>
+                <span id="menuCount">0 รายการ</span>
+              </div>
+              <div class="menu-grid" id="menuGrid"></div>
+            </div>
+
+            <div class="tab-view" id="tablesView">
+              <div class="toolbar">
+                <button class="secondary" id="addTableButton" type="button">เพิ่มโต๊ะ</button>
+                <button class="ghost danger" id="removeTableButton" type="button">ลดจำนวนโต๊ะ</button>
+              </div>
+              <div class="section-title">
+                <h3>เลือกโต๊ะ</h3>
+                <span id="selectedTableText">ยังไม่ได้เลือกโต๊ะ</span>
+              </div>
+              <div class="table-grid" id="tableGrid"></div>
+            </div>
+
+            <div class="tab-view" id="manageMenuView">
+              <div class="toolbar">
+                <div>
+                  <p class="eyebrow">Menu Management</p>
+                  <h3>แก้ไขเมนูของร้าน</h3>
+                </div>
+                <button class="secondary" id="openAddMenuFromManage" type="button">เพิ่มเมนูใหม่</button>
+              </div>
+              <div class="manage-list" id="manageMenuList"></div>
+            </div>
+
+            <div class="tab-view" id="kitchenView">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">Kitchen Queue</p>
+                  <h3>ลำดับการทำอาหาร</h3>
+                </div>
+                <span id="kitchenCount">0 รายการ</span>
+              </div>
+              <div class="kitchen-list" id="kitchenList"></div>
+            </div>
+
+            <div class="tab-view" id="dashboardView">
+              <section class="pos-dashboard">
+                <section class="ai-panel dashboard-ai-panel">
+                  <div>
+                    <p class="eyebrow">External AI API</p>
+                    <h3>AI Stock Insight</h3>
+                    <input
+                      id="aiPromptInput"
+                      type="text"
+                      class="ai-inline-input"
+                      placeholder="ถามคำถามเกี่ยวกับยอดขายและการวางแผนสต็อกของร้านได้โดยตรง"
+                    >
+                  </div>
+                  <form id="aiPromptForm" class="ai-prompt-form">
+                    <button class="primary" id="aiButton" type="submit">ถาม AI</button>
+                  </form>
+                  <div id="aiInsight" class="ai-insight-list">กดปุ่มเรียก AI เพื่อวิเคราะห์ข้อมูล</div>
+                </section>
+
+                <div class="stat-grid dashboard-summary-grid">
+                  <article class="stat-card">
+                    <span>Net Sales</span>
+                    <small>ยอดขายสุทธิ (รวม VAT)</small>
+                    <strong id="statSales">฿0</strong>
+                    <small id="statSalesBeforeVat">ไม่รวม VAT ฿0</small>
+                  </article>
+                  <article class="stat-card">
+                    <span>Bills</span>
+                    <small>จำนวนบิล</small>
+                    <strong id="statOrders">0</strong>
+                  </article>
+                  <article class="stat-card">
+                    <span>Average/Bill</span>
+                    <small>เฉลี่ยต่อบิล</small>
+                    <strong id="statAverage">฿0</strong>
+                  </article>
+                  <span class="hidden" id="statItems">0</span>
+                </div>
+
+                <div class="dashboard-report-grid">
+                  <section class="chart-panel category-panel">
+                    <div class="dashboard-panel-head">
+                      <h3>Sales by Food Category</h3>
+                      <span>ยอดขายตามประเภทอาหาร</span>
+                    </div>
+                    <div class="category-donut" id="categoryChart">
+                      <div>
+                        <span>Total</span>
+                        <strong id="categoryTotal">฿0</strong>
+                      </div>
+                    </div>
+                    <div class="category-legend" id="categoryLegend"></div>
+                  </section>
+
+                  <section class="chart-panel top-selling-panel">
+                    <div class="dashboard-panel-head">
+                      <h3>5 Top Selling Items</h3>
+                      <span>เมนูขายดี</span>
+                    </div>
+                    <div id="topMenus" class="top-selling-table"></div>
+                  </section>
+
+                </div>
+
+                <section class="chart-panel flow-panel">
+                  <div class="dashboard-panel-head">
+                    <div>
+                      <h3 id="salesFlowTitle">Sales Flow</h3>
+                      <span id="salesFlowSubtitle">ยอดขายรายชั่วโมง</span>
+                    </div>
+                    <div class="dashboard-chart-tools">
+                      <div class="dashboard-range-tabs">
+                        <button class="active" data-dashboard-range="day" type="button">รายวัน</button>
+                        <button data-dashboard-range="week" type="button">รายสัปดาห์</button>
+                        <button data-dashboard-range="month" type="button">รายเดือน</button>
+                      </div>
+                      <div class="dashboard-filter-fields">
+                        <input id="dashboardDateFilter" type="date">
+                        <input id="dashboardWeekFilter" type="week" class="hidden">
+                        <input id="dashboardMonthFilter" type="month" class="hidden">
+                      </div>
+                    </div>
+                  </div>
+                  <canvas id="hourChart" height="180"></canvas>
+                  <p id="hourChartEmpty" class="chart-empty hidden">ยังไม่มีข้อมูลในช่วงที่เลือก</p>
+                </section>
+
+                <aside class="dashboard-actions dashboard-actions-bottom">
+                  <button id="exportCsvButton" class="dashboard-action-button" type="button">Export CSV</button>
+                </aside>
+              </section>
+            </div>
+
+            <div class="tab-view" id="settingsView">
+              <section class="settings-panel">
+                <div class="section-title">
+                  <div>
+                    <p class="eyebrow">Store Settings</p>
+                    <h3>การตั้งค่า VAT</h3>
+                  </div>
+                </div>
+                <div class="settings-options">
+                  <label class="settings-option">
+                    <input type="radio" name="vatMode" value="none">
+                    <div>
+                      <strong>ไม่คิด VAT</strong>
+                      <small>เช็คบิลแบบไม่แสดง VAT และไม่บวกภาษีเพิ่ม</small>
+                    </div>
+                  </label>
+                  <label class="settings-option">
+                    <input type="radio" name="vatMode" value="inclusive">
+                    <div>
+                      <strong>คิด VAT แบบรวมในราคาแล้ว</strong>
+                      <small>เช่น ราคา 100 บาท จะแตกเป็นราคาก่อน VAT และ VAT 7% ให้ดู</small>
+                    </div>
+                  </label>
+                  <label class="settings-option">
+                    <input type="radio" name="vatMode" value="exclusive">
+                    <div>
+                      <strong>คิด VAT เพิ่มจากราคา</strong>
+                      <small>แบบเดียวกับที่ระบบใช้อยู่ตอนนี้</small>
+                    </div>
+                  </label>
+                </div>
+                <button class="primary" id="saveSettingsButton" type="button">บันทึกการตั้งค่า</button>
+              </section>
+            </div>
+          </section>
+
+          <aside class="bill-panel">
+            <div class="bill-head">
+              <div>
+                <p class="eyebrow">Current Bill</p>
+                <h3 id="billTitle">กินที่ร้าน</h3>
+              </div>
+              <button class="icon-button" id="clearCart" type="button" title="ล้างบิล">×</button>
+            </div>
+
+            <div class="order-type bill-order-type">
+              <button class="pill active" data-order-type="dine-in" type="button">กินที่ร้าน</button>
+              <button class="pill" data-order-type="takeaway" type="button">กลับบ้าน</button>
+            </div>
+
+            <div class="selected-table" id="selectedTableCard">เลือกโต๊ะก่อนเช็คบิล</div>
+            <div class="bill-notes">
+              <label class="field field-tight hidden" id="customerNameField">
+                <span>ชื่อลูกค้า</span>
+                <input id="customerNameInput" placeholder="เช่น คุณเอ">
+              </label>
+            </div>
+            <div class="cart-list" id="cartList"></div>
+
+            <div class="bill-summary">
+              <div id="subtotalRow"><span id="subtotalLabel">Subtotal</span><strong id="subtotalText">฿0</strong></div>
+              <div id="vatRow"><span>VAT 7%</span><strong id="vatText">฿0</strong></div>
+              <div class="total-row"><span id="totalLabel">Total</span><strong id="totalText">฿0</strong></div>
+            </div>
+
+            <button class="secondary wide" id="confirmBillButton" type="button">ยืนยันรายการส่งครัว</button>
+            <button class="primary wide" id="checkoutButton" type="button">เช็คบิล</button>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="menuDialog">
+      <form method="dialog" class="dialog-card" id="menuForm">
+        <div class="dialog-head">
+          <h3 id="menuDialogTitle">เพิ่มเมนู</h3>
+          <button class="icon-button" id="closeMenuDialog" type="button">×</button>
+        </div>
+        <label class="field">
+          <span>ชื่อเมนู</span>
+          <input id="menuNameInput" required placeholder="เช่น ข้าวกะเพรา">
+        </label>
+        <label class="field">
+          <span>ราคา</span>
+          <input id="menuPriceInput" required type="number" min="1" placeholder="55">
+        </label>
+        <label class="field">
+          <span>หมวดหมู่</span>
+          <input id="menuCategoryInput" placeholder="อาหาร / เครื่องดื่ม">
+        </label>
+        <label class="field">
+          <span>หน่วยสต็อก</span>
+          <input id="menuStockUnitInput" placeholder="จาน / แก้ว / ชุด">
+        </label>
+        <div class="field">
+          <span>รูปเมนู</span>
+          <div class="segmented image-source-switch">
+            <label class="segment radio-segment active-segment">
+              <input type="radio" name="menuImageSource" value="url" checked>
+              <span>ลิงก์รูป</span>
+            </label>
+            <label class="segment radio-segment">
+              <input type="radio" name="menuImageSource" value="upload">
+              <span>อัปโหลดไฟล์</span>
+            </label>
+          </div>
+        </div>
+        <label class="field" id="menuImageUrlField">
+          <span>URL รูปภาพ</span>
+          <input id="menuImageInput" placeholder="https://...">
+        </label>
+        <label class="field hidden" id="menuImageFileField">
+          <span>ไฟล์รูปภาพ</span>
+          <input id="menuImageFileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+        </label>
+        <div class="image-preview-card">
+          <img id="menuImagePreview" class="menu-image-preview hidden" alt="Preview">
+        </div>
+        <div class="option-editor">
+          <div class="section-title compact-title">
+            <h3>ตัวเลือก / Topping</h3>
+            <button class="secondary" id="addToppingButton" type="button">เพิ่มตัวเลือก</button>
+          </div>
+          <div class="topping-list" id="toppingList"></div>
+        </div>
+        <button class="primary wide" id="menuSubmitButton" type="submit">บันทึกเมนู</button>
+      </form>
+    </dialog>
+
+    <dialog id="confirmAddDialog">
+      <form method="dialog" class="dialog-card" id="confirmAddForm">
+        <div class="dialog-head">
+          <h3>ยืนยันเพิ่มเมนู</h3>
+          <button class="icon-button" id="cancelAddButton" type="button">×</button>
+        </div>
+        <p class="muted" id="confirmAddText">เลือกเมนูนี้ใส่บิลหรือไม่</p>
+        <div class="confirm-options" id="confirmOptionList"></div>
+        <label class="field">
+          <span>หมายเหตุของรายการนี้</span>
+          <input id="itemNoteInput" placeholder="เช่น ไม่ใส่ผัก / แยกน้ำ / เพิ่มน้ำแข็ง">
+        </label>
+        <div class="dialog-actions">
+          <button class="ghost" id="cancelAddAction" type="button">ยกเลิก</button>
+          <button class="primary" type="submit">เลือกใส่บิล</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="/js/main.js"></script>
+  </body>
+</html>
